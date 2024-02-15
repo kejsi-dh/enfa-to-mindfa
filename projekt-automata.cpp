@@ -6,7 +6,7 @@
 using namespace std;
 
 struct automat {
-	int nr_gjendjesh;
+    int nr_gjendjesh;
     int nr_char;
     char alfabet[100];
     int q0;
@@ -59,7 +59,6 @@ int gjej_gjendjen(const int vec[], int nr, int gjendje) {
 }
 
 void automati_fillestar(automat &a) {
-
     cout << "Jepni numrin e gjendjeve:\n";
     cin >> a.nr_gjendjesh;
 
@@ -90,9 +89,8 @@ void automati_fillestar(automat &a) {
 }
 
 void enfa_to_nfa(automat a, automat &nfa){
-
-	//epsilon mbyllja
-	vector<int> e_closure[100];
+    //epsilon mbyllja
+    vector<int> e_closure[100];
     for(int i=0; i<a.nr_gjendjesh; i++){
         int vizituar[106];
         for(int j=0; j<=100; j++)
@@ -109,9 +107,10 @@ void enfa_to_nfa(automat a, automat &nfa){
                     current.push_back(j); //shtohet ne fund te current
                 }
         }
+	//nqs gjendet nje gjendje eshte e shenuar me 1, shtohet ne array-in e espilon mbylljes
         for(int j=0; j<a.nr_gjendjesh; j++)
             if(vizituar[j] == 1)
-                e_closure[i].push_back(j); //nqs gjendet nje gjendje eshte e shenuar me 1, shtohet ne array-in e espilon mbylljes
+                e_closure[i].push_back(j);
     }
 
     //funksioni i kalimit
@@ -120,13 +119,15 @@ void enfa_to_nfa(automat a, automat &nfa){
         for(int j=0; j<a.nr_gjendjesh; j++){
             set<int> letters;
             for(int k : e_closure[j]){ //iterohen gjendjet qe ndodhen ne e_closure
-                for(int l : a.kalimet[k][i+1]){ //iterohen kalimet midis gjendjes qe ndodhet ne e_closure dhe nje karakter nga alfabeti
+		//iterohen kalimet midis gjendjes qe ndodhet ne e_closure dhe nje karakter nga alfabeti
+                for(int l : a.kalimet[k][i+1]){
                     letters.insert(l); //shtohen gjendjet ne letters
                 }
             }
             set<int> f;
             for(int x : letters){ //iterohen gjendjet qe ndodhen ne letters
-                for (int k : e_closure[x]){ //iterohen gjendjet e e_closure ne korrespondence me kalimet ne letters
+		//iterohen gjendjet e e_closure ne korrespondence me kalimet ne letters
+                for (int k : e_closure[x]){
                     f.insert(k); //shtohen gjendjet ne f
                 }
             }
@@ -144,7 +145,6 @@ void enfa_to_nfa(automat a, automat &nfa){
             for(int k=0; k<a.nr_gjendje_fundore; k++)
                 if (e_closure[i][j] == a.gjendje_fundore[k])
                     finale.insert(i); //shtohen gjendjet fundore ne set-in finale
-
     }
 
     //eleminohen gjendjet e teperta
@@ -164,9 +164,11 @@ void enfa_to_nfa(automat a, automat &nfa){
     		int ok = 0;
             if(viz[i] == viz[j]) { //nese kemi dy gjendje te njejta ne pozicione te ndryshme
             	for(int k=0; k<a.nr_char && ok == 0; k++)
-            		if(funk_kalimit[i][k+1].size() == funk_kalimit[j][k+1].size()){ //nese madhesia e dy kalimeve te ndryshme eshte e njejte
+			//nese madhesia e dy kalimeve te ndryshme eshte e njejte
+            		if(funk_kalimit[i][k+1].size() == funk_kalimit[j][k+1].size()){
             			for(unsigned int l=0; l<funk_kalimit[i][k+1].size() && ok == 0; l++)
-            				if(funk_kalimit[i][k+1][l] != funk_kalimit[j][k+1][l]) //nqs totali i array-ve qe krijohen nga kjo matrice 3d eshte e ndryshme
+					//nqs totali i array-ve qe krijohen nga kjo matrice 3d eshte e ndryshme
+            				if(funk_kalimit[i][k+1][l] != funk_kalimit[j][k+1][l])
             					ok = 1; //ok shenohet me 1
                         }
                         else
@@ -187,7 +189,8 @@ void enfa_to_nfa(automat a, automat &nfa){
                 for(int k=0; k<a.nr_char; k++)
                     for(int &l : funk_kalimit[j][k+1]) //iterohet funksioni i kalimit
                         if(l == i)
-                            l = put[i]; //nqs gjendet nje gjendje qe nuk eshte ne aray-in put ne funk_kalimit shtohet ne put
+			    //nqs gjendet nje gjendje qe nuk eshte ne aray-in put ne funk_kalimit shtohet ne put
+                            l = put[i];
             eleminim.insert(i); //shtohen gjendjet qe do te hiqen ne set-in eleminim
         }
 
@@ -256,7 +259,6 @@ void enfa_to_nfa(automat a, automat &nfa){
 }
 
 void nfa_to_dfa(automat a, automat &dfa) {
-
     queue < set <int> > queue;
     set < set <int> > elemente;
     queue.push({a.q0}); // @suppress("Invalid arguments")
@@ -350,7 +352,8 @@ void dfa_to_mindfa(automat a, automat &dfa_minimal) {
         for(int j=0; j<a.nr_gjendjesh; j++){
             matrice_ekuivalente[i][j] = -1; //ne matrice gjendjet e njejta shenohen me -1
             if(i>j){
-                matrice_ekuivalente[i][j] = 1; //shenohen me 1 gjendjet ku gjendja e pare eshte me e madhe se gjendja e dyte
+		//shenohen me 1 gjendjet ku gjendja e pare eshte me e madhe se gjendja e dyte
+                matrice_ekuivalente[i][j] = 1; 
                 if((e_final(a,i) == -1 && e_final(a,j) != -1) || (e_final(a,j) == -1 && e_final(a,i) != -1))
                     matrice_ekuivalente[i][j] = 0; //shenohet me 0 nqs gjenden gjendje fundore te shenuara me -1
                 }
@@ -382,7 +385,8 @@ void dfa_to_mindfa(automat a, automat &dfa_minimal) {
     for(int i=0; i<a.nr_gjendjesh; i++ ){
         for(int j=0; j<i; j++)
             if(grup_gjendjet[j] != -1 && matrice_ekuivalente[i][j] == 1){
-                grup_gjendjet[i] = grup_gjendjet[j]; //gjendja do te shenohet ne te njejten menyre qe eshte shenuar gjendja e ndryshme nga -1
+		//gjendja do te shenohet ne te njejten menyre qe eshte shenuar gjendja e ndryshme nga -1
+                grup_gjendjet[i] = grup_gjendjet[j]; 
                 break; //dilet nga cikli
             }
         if(grup_gjendjet[i] == -1){
@@ -470,8 +474,10 @@ void dfa_to_mindfa(automat a, automat &dfa_minimal) {
         for(int i=x-eleminuar; i<nrgj-1; i++)
             for(int j=0; j<a.nr_char; j++)
                 for(unsigned int l=0; l<funk_kalimit[i][j+1].size();l++){
-                	funk_kalimit[i][j+1].clear(); //fshihet gjendja qe nuk ben me pjese ne funksionin e kalimit
-                    funk_kalimit[i][j+1].push_back(funk_kalimit[i+1][j+1][l]); //shtohen gjendjet ne funksionin e kalimit
+			//fshihet gjendja qe nuk ben me pjese ne funksionin e kalimit
+                	funk_kalimit[i][j+1].clear(); 
+		    //shtohen gjendjet ne funksionin e kalimit
+                    funk_kalimit[i][j+1].push_back(funk_kalimit[i+1][j+1][l]); 
                 }
         nrgj--; //numri i gjendjeve dekrementohet
         eleminuar++; //numri i gjendjeve te eleminuara inkrementohet
