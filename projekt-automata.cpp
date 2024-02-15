@@ -356,7 +356,7 @@ void dfa_to_mindfa(automat a, automat &dfa_minimal) {
                 matrice_ekuivalente[i][j] = 1; 
                 if((e_final(a,i) == -1 && e_final(a,j) != -1) || (e_final(a,j) == -1 && e_final(a,i) != -1))
                     matrice_ekuivalente[i][j] = 0; //shenohet me 0 nqs gjenden gjendje fundore te shenuara me -1
-                }
+            }
         }
 
     int ok = 1;
@@ -372,8 +372,8 @@ void dfa_to_mindfa(automat a, automat &dfa_minimal) {
         				matrice_ekuivalente[j][k] = 0;
         				//nqs gjenden gjendje ne kalimet tek matrica ekuivalences te shenuara me 0 dhe gjendje te shenuara me 1
         				//ok behet 1 dhe gjendjet e shenuara me 1 shenohen tashme me 0
-                }
-            }
+                                }
+                         }
     }
 
     int grup_gjendjet[100];
